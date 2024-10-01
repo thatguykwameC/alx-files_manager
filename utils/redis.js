@@ -6,10 +6,9 @@ import { createClient } from 'redis';
  */
 class RedisClient {
   /**
-   * Creates a new Redis client.
-   * @returns {RedisClient}
+   * Creates a new RedisClient instance.
    */
-  constructor () {
+  constructor() {
     this.client = createClient();
     this.isClientConnected = true;
     this.client.on('error', (err) => {
@@ -22,40 +21,40 @@ class RedisClient {
   }
 
   /**
-   * Checks if the client is connected.
-   * @returns {Boolean}
+   * Checks if this client's connection to the Redis server is active.
+   * @returns {boolean}
    */
-  isAlive () {
+  isAlive() {
     return this.isClientConnected;
   }
 
   /**
-   * Gets the value of a given key.
-   * @param {String} key The key of the item to get.
-   * @returns {Promise<String>}
+   * Retrieves the value of a given key.
+   * @param {String} key The key of the item to retrieve.
+   * @returns {String | Object}
    */
-  async get (key) {
+  async get(key) {
     return promisify(this.client.GET).bind(this.client)(key);
   }
 
   /**
-   * Sets the value of a given key.
-   * @param {String} key The key of the item to set.
-   * @param {String} value The value of the item to set.
-   * @param {Number} duration The duration of the item in seconds.
+   * Stores a key and its value along with an expiration time.
+   * @param {String} key The key of the item to store.
+   * @param {String | Number | Boolean} value The item to store.
+   * @param {Number} duration The expiration time of the item in seconds.
    * @returns {Promise<void>}
    */
-  async set (key, value, duration) {
+  async set(key, value, duration) {
     await promisify(this.client.SETEX)
       .bind(this.client)(key, duration, value);
   }
 
   /**
-   * Deletes a given key.
-   * @param {String} key The key of the item to delete.
+   * Removes the value of a given key.
+   * @param {String} key The key of the item to remove.
    * @returns {Promise<void>}
    */
-  async del (key) {
+  async del(key) {
     await promisify(this.client.DEL).bind(this.client)(key);
   }
 }
